@@ -48,7 +48,7 @@ class Knownbeacons(object):
         :rtype: list
         """
 
-        beacons = list()
+        beacons = []
         essid = str()
         bssid = self.data.rogue_ap_mac
 

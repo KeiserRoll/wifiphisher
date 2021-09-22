@@ -81,8 +81,7 @@ class MACMatcher(object):
 
         # try to find the vendor and if not found return unknown
         try:
-            vendor = self._mac_to_vendor[mac_identifier][0]
-            return vendor
+            return self._mac_to_vendor[mac_identifier][0]
         except KeyError:
             return "Unknown"
 

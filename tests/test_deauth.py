@@ -43,8 +43,8 @@ class TestDeauth(unittest.TestCase):
         self.deauth_obj1 = deauth.Deauth(data1)
 
         # test for --deauth-essid
-        self.deauth_obj0._deauth_bssids = dict()
-        self.deauth_obj1._deauth_bssids = dict()
+        self.deauth_obj0._deauth_bssids = {}
+        self.deauth_obj1._deauth_bssids = {}
 
     def test_craft_packet_normal_expected(self):
         """
