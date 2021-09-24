@@ -22,9 +22,7 @@ def is_deauth_frame(packet):
     :return: True if the frame is belonged to deauth module
     :rtype: bool
     """
-    if packet.subtype == 10 or packet.subtype == 12:
-        return True
-    return False
+    return packet.subtype in [10, 12]
 
 class Deauth(object):
     """
@@ -47,7 +45,7 @@ class Deauth(object):
         self._should_continue = True
         self._data = data
         # the bssids having the same ESSID
-        self._deauth_bssids = dict()
+        self._deauth_bssids = {}
         # channel mapping to the frames list
         self._packets_to_send = defaultdict(list)
 
@@ -146,7 +144,7 @@ class Deauth(object):
         :rtype: tuple
         """
 
-        packets_to_send = list()
+        packets_to_send = []
 
         # basic malformed frame check
         try:

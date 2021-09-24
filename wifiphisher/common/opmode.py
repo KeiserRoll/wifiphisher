@@ -205,15 +205,7 @@ class OpMode(object):
         """
 
         if not args.internetinterface and not args.noextensions:
-            if not self._use_one_phy:
-                # check if there is WPS association interface
-                if args.wpspbc_assoc_interface:
-                    self.op_mode = constants.OP_MODE7
-                    logger.info("Starting OP_MODE7 (0x7)")
-                else:
-                    self.op_mode = constants.OP_MODE1
-                    logger.info("Starting OP_MODE1 (0x1)")
-            else:
+            if self._use_one_phy:
                 # TODO: We should not add any vifs here.
                 # These should happen after the interface 
                 # checks in main engine
@@ -226,6 +218,12 @@ class OpMode(object):
                 else:
                     self.op_mode = constants.OP_MODE5
                     logger.info("Starting OP_MODE5 (0x5)")
+            elif args.wpspbc_assoc_interface:
+                self.op_mode = constants.OP_MODE7
+                logger.info("Starting OP_MODE7 (0x7)")
+            else:
+                self.op_mode = constants.OP_MODE1
+                logger.info("Starting OP_MODE1 (0x1)")
         if args.internetinterface and not args.noextensions:
             if not self._use_one_phy:
                 self.op_mode = constants.OP_MODE2

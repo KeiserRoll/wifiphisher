@@ -425,8 +425,8 @@ class WifiphisherEngine:
                     internet_interface = args.internetinterface
                     if interfaces.is_wireless_interface(internet_interface):
                         try:
-                          self.network_manager.unblock_interface(
-                            internet_interface)
+                            self.network_manager.unblock_interface(
+                              internet_interface)
                         except KeyError:
                             # TODO: Find a workaround for managing blocked adapters that do not support nl80211
                             # Calling unblock on internet interfaces might return a `Key Error` if it does not 
@@ -434,15 +434,17 @@ class WifiphisherEngine:
                             # be unblocked automatically. Let the user know with a warning.
                             logger.warning("Interface {} does not support 'nl80211'. In case it is blocked,\
                                     you must unblock it manually".format(internet_interface))
-                            pass
                 logger.info("Selecting %s interface for accessing internet",
                             args.internetinterface)
             # check if the interface for WPS is valid
-            if self.opmode.assoc_enabled():
-                if self.network_manager.is_interface_valid(
-                        args.wpspbc_assoc_interface, "WPS"):
-                    logger.info("Selecting %s interface for WPS association",
-                                args.wpspbc_assoc_interface)
+            if (
+                self.opmode.assoc_enabled()
+                and self.network_manager.is_interface_valid(
+                    args.wpspbc_assoc_interface, "WPS"
+                )
+            ):
+                logger.info("Selecting %s interface for WPS association",
+                            args.wpspbc_assoc_interface)
             if self.opmode.extensions_enabled():
                 if args.extensionsinterface and args.apinterface:
                     if self.network_manager.is_interface_valid(
@@ -583,9 +585,7 @@ class WifiphisherEngine:
             copyfile(payload_path,
                      self.template_manager.template_directory + template.get_payload_path())
 
-        APs_context = []
-        for i in APs:
-            APs_context.append({
+        APs_context = [{
                 'channel':
                 APs[i][0] or "",
                 'essid':
@@ -594,8 +594,7 @@ class WifiphisherEngine:
                 APs[i][2] or "",
                 'vendor':
                 self.mac_matcher.get_vendor_name(APs[i][2]) or ""
-            })
-
+            } for i in APs]
         template.merge_context({'APs': APs_context})
 
         # only get logo path if MAC address is present
@@ -627,7 +626,7 @@ class WifiphisherEngine:
 
         # We want to set this now for hostapd. Maybe the interface was in "monitor"
         # mode for network discovery before (e.g. when --noextensions is enabled).
-        
+
         self.network_manager.set_interface_mode(ap_iface, "managed")
         # Start AP
         self.network_manager.up_interface(ap_iface)

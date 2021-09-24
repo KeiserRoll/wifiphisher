@@ -44,7 +44,7 @@ class TuiTemplateSelection(object):
         # store the current page number
         self.page_number = 0
         # store the phishing contents of each scenario
-        self.sections = list()
+        self.sections = []
         # map the section to page number
         self.sec_page_map = {}
         # the window size for (y, x)
@@ -126,7 +126,7 @@ class TuiTemplateSelection(object):
         if template_argument and template_argument in templates:
             # return the template name
             return templates[template_argument]
-        elif template_argument and template_argument not in templates:
+        elif template_argument:
             # in case of an invalid template
             raise phishingpage.InvalidTemplate
         else:
@@ -292,8 +292,7 @@ class TuiTemplateSelection(object):
                 screen.refresh()
                 time.sleep(1)
                 template_name = template_names[self.heightlight_number]
-                template = templates[template_name]
-                return template
+                return templates[template_name]
             screen.refresh()
 
 
@@ -438,7 +437,7 @@ class TuiApSel(object):
         """
 
         self.total_ap_number = 0
-        self.access_points = list()
+        self.access_points = []
         self.access_point_finder = None
         self.highlight_text = None
         self.normal_text = None
@@ -603,22 +602,16 @@ class TuiApSel(object):
             # if next item is in the next page change page and move
             # down otherwise just move down)
             if pos % max_row == 0:
-                pos += 1
                 page_number += 1
-            else:
-                pos += 1
-
-        # in case arrow up key has been pressed
+            pos += 1
         elif key == curses.KEY_UP:
             # if not the first item
-            if (pos - 1) > 0:
+            if pos > 1:
                 # if previous item is in previous page_number, change page
                 # and move up otherwise just move up
                 if (pos - 1) % max_row == 0:
-                    pos -= 1
                     page_number -= 1
-                else:
-                    pos -= 1
+                pos -= 1
         # update key, position, and page_number
         ap_info.key = key
         ap_info.pos = pos
@@ -942,21 +935,16 @@ class TuiMain(object):
             pass
 
         if info.em:
-            # start raw number from 2
-            raw_num = 2
-            for client in info.em.get_output()[-5:]:
+            for raw_num, client in enumerate(info.em.get_output()[-5:], start=2):
                 screen.addstr(raw_num, 0, client)
-                raw_num += 1
         try:
             # Print the connected victims section
             screen.addstr(7, 0, "Connected Victims: ", self.blue_text)
             victims_instance = victim.Victims.get_instance()
             vict_dic = victims_instance.get_print_representation()
-            row_counter = 8
-            for key in vict_dic:
+            for row_counter, key in enumerate(vict_dic, start=8):
                 screen.addstr(row_counter, 0, key, self.red_text)
                 screen.addstr(row_counter, 22, vict_dic[key])
-                row_counter += 1
             # Print the http request section
             screen.addstr(13, 0, "HTTP requests: ", self.blue_text)
             if os.path.isfile('/tmp/wifiphisher-webserver.tmp'):
